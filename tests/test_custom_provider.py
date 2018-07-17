@@ -20,10 +20,7 @@ def get_throughput_mode(file_system_id):
 
 
 def test_invalid_input():
-    name = 'test-%s' % uuid.uuid4()
-
-    request = Request('Create', 'fs-doesnotexist', 'provisioned', None)
-    request['ResourceProperties']['ProvisionedThroughputInMibps'] = 1024.0
+    request = Request('Create', 'fs-doesnotexist', 'provisioned', 0.5)
 
     response = handler(request, {})
     assert response['Status'] == 'FAILED', response['Reason']
@@ -45,27 +42,25 @@ def test_create():
         mode, mibs = get_throughput_mode(fs)
         assert mode == 'bursting'
 
-        request = Request('Create', fs, 'provisioned', 756.0)
+        request = Request('Create', fs, 'provisioned', 1.0)
         response = handler(request, {})
         assert response['Status'] == 'SUCCESS', response['Reason']
         assert 'PhysicalResourceId' in response
         mode, mibs = get_throughput_mode(fs)
         assert mode == 'provisioned'
-        assert mibs == 756.0
+        assert mibs == 1.0
 
-        sleep(10)
         physical_resource_id = response['PhysicalResourceId']
-        request = Request('Update', fs, 'provisioned', 1024.0, physical_resource_id)
+        request = Request('Update', fs, 'provisioned', 1.1, physical_resource_id)
         response = handler(request, {})
         assert response['Status'] == 'SUCCESS', response['Reason']
         assert 'PhysicalResourceId' in response
         assert response['PhysicalResourceId'] == physical_resource_id
         mode, mibs = get_throughput_mode(fs)
         assert mode == 'provisioned'
-        assert mibs == 1024.0
+        assert mibs == 1.1
 
         # delete
-        sleep(10)
         request['RequestType'] = 'Delete'
         response = handler(request, {})
         assert response['Status'] == 'SUCCESS', response['Reason']
