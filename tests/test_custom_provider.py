@@ -32,6 +32,12 @@ def test_invalid_mibps():
     assert response['Status'] == 'FAILED', response['Reason']
 
 
+def test_missing_mibps():
+    request = Request('Create', 'fs-doesnotexist', 'provisioned')
+    del request['PhysicalResourceId']
+    response = handler(request, {})
+    assert response['Status'] == 'FAILED', response['Reason']
+
 def test_create():
     name = 'test-%s' % uuid.uuid4()
     fs = None
@@ -51,21 +57,21 @@ def test_create():
         assert mibs == 1.0
 
         physical_resource_id = response['PhysicalResourceId']
-        request = Request('Update', fs, 'provisioned', 1.1, physical_resource_id)
+        request = Request('Update', fs, 'provisioned', 2.0, physical_resource_id)
         response = handler(request, {})
         assert response['Status'] == 'SUCCESS', response['Reason']
         assert 'PhysicalResourceId' in response
         assert response['PhysicalResourceId'] == physical_resource_id
         mode, mibs = get_throughput_mode(fs)
         assert mode == 'provisioned'
-        assert mibs == 1.1
+        assert mibs == 2.0
 
         # delete
         request['RequestType'] = 'Delete'
         response = handler(request, {})
         assert response['Status'] == 'SUCCESS', response['Reason']
         mode, mibs = get_throughput_mode(fs)
-        assert mode == 'bursting'
+        assert mode == 'provisioned'
 
     except:
         if fs is not None:

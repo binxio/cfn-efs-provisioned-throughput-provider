@@ -84,9 +84,7 @@ class EfsProvisionedThroughputProvider(ResourceProvider):
         self.update_file_system()
 
     def delete(self):
-        if self.physical_resource_id != 'failed-to-create':
-            self.properties['ThroughputMode'] = 'bursting'
-        self.update_file_system()
+        pass
 
 
 provider = EfsProvisionedThroughputProvider()
