@@ -5,4 +5,4 @@ On [July the 12th, 2018] Amazon announced the [availability of Provisioned throu
 
 Unfortunately, this could only be enable through the Console or the API, not via CloudFormation. As we use only allow changes through code, we need the CloudFormation interface over the Console.  The Console is nice for playing around, not for engineering solutions on AWS.
 
-On August the 8th, we discovered that Amazon added the properties `ThroughputMode` and `ProvisionedThroughputInMibs` on CloudFormation resources of type [AWS::EFS::FileSystem](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-efs-filesystem.html), making this provider obsolete!
+On August the 8th, we discovered that Amazon added the properties `ThroughputMode` and `ProvisionedThroughputInMibps` on CloudFormation resources of type [AWS::EFS::FileSystem](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-efs-filesystem.html), making this provider obsolete!
